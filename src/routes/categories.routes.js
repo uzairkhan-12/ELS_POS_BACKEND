@@ -1,0 +1,38 @@
+const express = require('express');
+const router = express.Router();
+const {
+    getCategories,
+    getCategory,
+    createCategory,
+    updateCategory,
+    deleteCategory
+} = require('../controllers/categories.controller');
+const { authMiddleware, authorize } = require('../middleware/auth.middleware');
+const { USER_ROLES } = require('../config/constants');
+
+// @route   GET /api/categories
+// @desc    Get all categories
+// @access  Public
+router.get('/', getCategories);
+
+// @route   GET /api/categories/:id
+// @desc    Get category by ID
+// @access  Public
+router.get('/:id', getCategory);
+
+// @route   POST /api/categories
+// @desc    Create new category
+// @access  Private (Admin/Manager)
+router.post('/', authMiddleware, authorize([USER_ROLES.ADMIN, USER_ROLES.MANAGER]), createCategory);
+
+// @route   PUT /api/categories/:id
+// @desc    Update category
+// @access  Private (Admin/Manager)
+router.put('/:id', authMiddleware, authorize([USER_ROLES.ADMIN, USER_ROLES.MANAGER]), updateCategory);
+
+// @route   DELETE /api/categories/:id
+// @desc    Delete category
+// @access  Private (Admin)
+router.delete('/:id', authMiddleware, authorize([USER_ROLES.ADMIN]), deleteCategory);
+
+module.exports = router;
