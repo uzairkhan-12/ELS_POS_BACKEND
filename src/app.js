@@ -11,12 +11,10 @@ const app = express();
 // Security middleware
 app.use(helmet());
 
-// CORS configuration
+// CORS configuration - Allow all origins
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? ['https://your-domain.com'] 
-        : ['http://localhost:3000', 'http://localhost:5173'],
-    credentials: true
+    origin: '*',
+    credentials: false
 }));
 
 // Body parsing middleware
