@@ -40,6 +40,38 @@ const getCategories = async (req, res) => {
         });
     }
 };
+const getAllCategories = async (req, res) => {
+    try {
+        const { limit = 100, skip = 0 } = req.query;
+
+        const filter = {};
+
+        const categories = await Category.find(filter)
+            .sort({ displayOrder: 1, name: 1 })
+            .limit(parseInt(limit))
+            .skip(parseInt(skip));
+
+        const total = await Category.countDocuments(filter);
+
+        res.status(HTTP_STATUS.OK).json({
+            success: true,
+            message: 'Categories retrieved successfully',
+            data: {
+                categories,
+                total,
+                limit: parseInt(limit),
+                skip: parseInt(skip)
+            }
+        });
+    } catch (error) {
+        logger.error(`Get categories error: ${error.message}`);
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'Failed to retrieve categories',
+            error: error.message
+        });
+    }
+};
 
 /**
  * Get single category by ID
@@ -216,10 +248,50 @@ const deleteCategory = async (req, res) => {
     }
 };
 
+/**
+ * Toggle category status (active/inactive)
+ * @route   PATCH /api/categories/:id/toggle-status
+ * @access  Private (Admin/Manager)
+ */
+const toggleStatus = async (req, res) => {
+    try {
+        const category = await Category.findById(req.params.id);
+
+        if (!category) {
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
+                success: false,
+                message: 'Category not found',
+                data: null
+            });
+        }
+
+        // Toggle status between active and inactive
+        category.status = category.status === 'active' ? 'inactive' : 'active';
+        await category.save();
+
+        logger.success(`Category status toggled: ${category.name} -> ${category.status}`);
+
+        res.status(HTTP_STATUS.OK).json({
+            success: true,
+            message: `Category ${category.status} successfully`,
+            data: { category }
+        });
+    } catch (error) {
+        logger.error(`Toggle category status error: ${error.message}`);
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'Failed to toggle category status',
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     getCategories,
     getCategory,
+    getAllCategories,
     createCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    toggleStatus
 };

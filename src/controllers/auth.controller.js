@@ -140,8 +140,64 @@ const register = async (req, res) => {
     });
 };
 
+/**
+ * Toggle user status (active/inactive)
+ * @route   PATCH /api/auth/users/:id/toggle-status
+ * @access  Private (Admin)
+ */
+const toggleUserStatus = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
+                success: false,
+                message: 'User not found',
+                data: null
+            });
+        }
+
+        // Cannot toggle own status
+        if (user._id.toString() === req.user.userId) {
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
+                success: false,
+                message: 'Cannot toggle your own status',
+                data: null
+            });
+        }
+
+        // Toggle status between active and inactive
+        user.status = user.status === 'active' ? 'inactive' : 'active';
+        await user.save();
+
+        logger.success(`User status toggled: ${user.username} -> ${user.status}`);
+
+        res.status(HTTP_STATUS.OK).json({
+            success: true,
+            message: `User ${user.status} successfully`,
+            data: {
+                user: {
+                    id: user._id,
+                    username: user.username,
+                    email: user.email,
+                    role: user.role,
+                    status: user.status
+                }
+            }
+        });
+    } catch (error) {
+        logger.error(`Toggle user status error: ${error.message}`);
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'Failed to toggle user status',
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     register,
     login,
-    getCurrentUser
+    getCurrentUser,
+    toggleUserStatus
 };
