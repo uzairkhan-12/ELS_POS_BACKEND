@@ -120,7 +120,7 @@ const getStaffMember = async (req, res) => {
  */
 const createStaff = async (req, res) => {
     try {
-        const { name, email, phone, role, salary } = req.body;
+        const { name, email, phone, role, bonus } = req.body;
 
         // Validation
         if (!name || name.trim().length === 0) {
@@ -136,7 +136,7 @@ const createStaff = async (req, res) => {
             email: email?.trim() || '',
             phone: phone?.trim() || '',
             role: role || 'cashier',
-            salary: salary || 0
+            bonus: bonus || 0
         });
 
         await staff.save();
@@ -165,7 +165,7 @@ const createStaff = async (req, res) => {
  */
 const updateStaff = async (req, res) => {
     try {
-        const { name, email, phone, role, salary, status } = req.body;
+        const { name, email, phone, role, bonus, status } = req.body;
 
         const staff = await Staff.findById(req.params.id);
 
@@ -182,15 +182,15 @@ const updateStaff = async (req, res) => {
         if (email !== undefined) staff.email = email?.trim() || '';
         if (phone !== undefined) staff.phone = phone?.trim() || '';
         if (role) staff.role = role;
-        if (salary !== undefined) {
-            if (salary < 0) {
+        if (bonus !== undefined) {
+            if (bonus < 0) {
                 return res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
-                    message: 'Salary cannot be negative',
+                    message: 'Bonus cannot be negative',
                     data: null
                 });
             }
-            staff.salary = salary;
+            staff.bonus = bonus;
         }
         if (status) staff.status = status;
 

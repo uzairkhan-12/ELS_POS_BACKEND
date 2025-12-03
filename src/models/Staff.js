@@ -42,19 +42,15 @@ const StaffSchema = new mongoose.Schema({
         enum: Object.values(USER_ROLES),
         default: USER_ROLES.CASHIER
     },
+    bonus: {
+        type: Number,
+        min: [0, 'Bonus cannot be negative'],
+        default: 0
+    },
     status: {
         type: String,
         enum: Object.values(STATUS),
         default: STATUS.ACTIVE
-    },
-    joinDate: {
-        type: Date,
-        default: Date.now
-    },
-    salary: {
-        type: Number,
-        min: [0, 'Salary cannot be negative'],
-        default: 0
     }
 }, {
     timestamps: true,

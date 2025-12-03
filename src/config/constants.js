@@ -8,6 +8,7 @@ module.exports = {
         ADMIN: 'admin',
         MANAGER: 'manager',
         CASHIER: 'cashier',
+        WAITER: 'waiter',
         CUSTOMER: 'customer'
     },
     HTTP_STATUS: {
