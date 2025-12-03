@@ -5,6 +5,7 @@ const authRoutes = require('./auth.routes');
 const categoriesRoutes = require('./categories.routes');
 const itemsRoutes = require('./items.routes');
 const staffRoutes = require('./staff.routes');
+const tablesRoutes = require('./tables.routes');
 
 // Health check routes
 router.use('/', healthRoutes);
@@ -20,5 +21,8 @@ router.use('/items', itemsRoutes);
 
 // Staff routes
 router.use('/staff', staffRoutes);
+
+// Tables routes
+router.use('/tables', tablesRoutes);
 
 module.exports = router;
