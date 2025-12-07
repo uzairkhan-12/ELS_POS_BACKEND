@@ -325,6 +325,44 @@ const toggleOccupied = async (req, res) => {
 };
 
 /**
+ * Set table occupied status
+ * @route   PATCH /api/tables/:id/occupied
+ * @access  Private
+ */
+const setOccupied = async (req, res) => {
+    try {
+        const { occupied } = req.body;
+        const table = await Table.findById(req.params.id);
+
+        if (!table) {
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
+                success: false,
+                message: 'Table not found',
+                data: null
+            });
+        }
+
+        table.occupied = occupied;
+        await table.save();
+
+        logger.success(`Table occupied status set: Table #${table.tableNumber} is now ${table.occupied ? 'occupied' : 'empty'}`);
+
+        res.status(HTTP_STATUS.OK).json({
+            success: true,
+            message: `Table is now ${table.occupied ? 'occupied' : 'empty'}`,
+            data: { table }
+        });
+    } catch (error) {
+        logger.error(`Set table occupied error: ${error.message}`);
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'Failed to set table occupied status',
+            error: error.message
+        });
+    }
+};
+
+/**
  * Update table positions (for drag and drop)
  * @route   PATCH /api/tables/positions
  * @access  Private (Admin/Manager)
@@ -377,5 +415,6 @@ module.exports = {
     deleteTable,
     toggleStatus,
     toggleOccupied,
+    setOccupied,
     updatePositions
 };
