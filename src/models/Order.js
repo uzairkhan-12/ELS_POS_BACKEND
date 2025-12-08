@@ -121,7 +121,7 @@ const OrderSchema = new mongoose.Schema({
     },
     taxRate: {
         type: Number,
-        default: 0.08, // 8% tax rate
+        default: 0, // 8% tax rate
         min: [0, 'Tax rate cannot be negative'],
         max: [1, 'Tax rate cannot exceed 100%']
     },

@@ -192,7 +192,7 @@ exports.createOrder = async (req, res, next) => {
             staff: orderStaff,
             notes: notes || '',
             customerCount: customerCount || 1,
-            taxRate: taxRate || 0.08,
+            taxRate: taxRate || 0,
             status: 'served',
             paymentStatus: paymentStatus || 'paid'
         });
